@@ -1,0 +1,15 @@
+Excel Reminder Tips 
+
+Fill all blank cells with 0
+1. Select the entire range of cells that contains the blanks, including those that contain values.
+
+2. On the Home tab, in the Editing group, click Find and Select, then click Go To..., or just press F5.
+
+3. Click Special, select Blanks and click OK
+
+4. Type a 0 (zero), hold down CTRL and press ENTER
+
+All the blank cells should now contain zeroes.
+
+
+

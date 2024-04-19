@@ -1,0 +1,22 @@
+Excel Reminder Tips 
+
+FILL ALL BLANK CELLS WITH 0
+1. Select the entire range of cells that contains the blanks, including those that contain values.
+
+2. On the Home tab, in the Editing group, click Find and Select, then click Go To..., or just press F5.
+
+3. Click Special, select Blanks and click OK
+
+4. Type a 0 (zero), hold down CTRL and press ENTER
+
+All the blank cells should now contain zeroes.
+
+
+MATRIX MULTIPLICATION
+
+columns in array 1 match rows in array 2
+
+any blank ot text values and the whole formula goes to value error
+
+need to have ranges and not tables 
+
