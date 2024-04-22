@@ -20,3 +20,138 @@ any blank ot text values and the whole formula goes to value error
 
 need to have ranges and not tables 
 
+
+Reverse order of table:
+
+use power query, data->from table/range -> keep rows-> reverse rows
+
+helper column, make a sequence then reverse order of sequence
+
+can't insert into top of latest first recxingred table
+
+2nd way: Make helper column using sequence, paste as plain text into next column over, 
+sort the helper with the data 
+
+
+Insert into bottom, 
+fill with 0s, then rexXNUt will be defined for the new recipes and can reverse it
+
+CAN use IF(
+ISBLANK to fill blank cells, creates a new array of test conditions the size
+of the array used in ISBLANK
+
+
+METHODOLOGY FOR RECIPEXCOST
+
+I need the ingredients in the coloumns and rows to match 
+in the cost sheet I have multiples of the same ingredient at different 
+sizes and brands and also some ingredients that I never used in a recipe
+but i could in the future use as a substitute or to try 
+
+I want to know what the difference in cost would be if I use a different brand,
+sub an ingredient or buy in a different size 
+
+I have a mixed ingredient: vegan butter in the recipe column but I don't want 
+to calculate the cost for it right now, so i'm just going to use the coconut oil cost
+because it's mainlycoconut oil. 
+
+SO: i added the Vbutter to the cost sheet and will copy the cost of coco oil down to it
+
+so: I included the ingreidents foundwith a cost in the recipes sheet, and I will fill with 
+0s, when I want to know how changing a recipe with a different ingredient type or bulk 
+will affect cost I'll fill in the value in that column and run the formula 
+
+a cost per use could be another usefull stat to find here 
+
+CAn't do ensted arrays in excel
+no formula can evaluate an array within an array MUNIT({1,2}} is asked to give an identity
+matrix of 1x1 and 2x2 which it can't 
+
+
+WHAT I WANT MY UPDATE RECIPE MACRO TO DO 
+
+1. when I enter a new recipe dateType into a cell, of the column containing 
+all recipe dateTypes 
+2. take that recipe dateType and add it to a different worksheet
+in the same place with the same order as in the original worksheet column
+3. For the derived worksheets: 
+Take the new ingredients on the row(the recipe) and use them to  update
+the formula --> In practice this means putting the old formula into the top left
+cell, the one after the header and index, and use the new range of all the cells
+that have values in them in the first worksheet(recipeXIngredients) inside the 
+formula range 
+
+
+VBA
+
+run/test and f5(run/test) will run whether inside a sub or outside it, if outside it'll ask which sub to run
+if inside it'll just run 
+
+
+'Sub upNames2(recipeDateType As String)
+    'Dim sheet As Worksheet'
+    'Dim sheet2 As Worksheet'
+    'Dim sheets() As Variant
+    'sheets = Array(Worksheets("Sheet1"), Worksheets("Sheet2"))
+    
+    'Dim sheet As Variant
+   ' For Each sheet In sheets
+  '      sheet.Rows(1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        'sheet.Cells(1, 1) = recipeDateType'
+ '   Next sheet
+    
+    
+'End Sub '
+Sub updateNames(recipeDateType As String)
+    'Dim sheet As Worksheet'
+    'Dim sheet2 As Worksheet'
+    Dim sheets(1 To 2) As Worksheet
+    Set sheets(1) = Worksheets("Sheet1")
+    Set sheets(2) = Worksheets("Sheet2")
+    
+    
+    Dim sheet As Variant
+    For Each sheet In sheets
+        sheet.Rows(1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        sheet.Cells(1, 1) = recipeDateType '
+    Next sheet
+    sheets(1).Cells(1, 2) = 1
+    sheets(1).Cells(1, 3) = 1
+    
+    Dim myRange As Range
+    
+    
+    Application.WorksheetFunction.Sum (myRange)
+    
+    
+End Sub
+
+Sub TestUpdateNames()
+    updateNames ("test")
+
+End Sub
+
+
+Sub FindNonBlankCellsWithIntsOrFloats()
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    
+    Dim cellRange As Range
+    Set cellRange = sheet.Range("A1:A10")
+    Dim cell As Range
+    For Each cell In cellRange
+        
+        'If Not IsEmpty(cell.Value) Then
+        'Debug.Print VarType(cell.Value)
+        
+        If Not IsEmpty(cell.Value) And VarType(cell.Value) = 5 Then
+Pick up here tomorrow--I want to now store the address if the first and last cell
+that have a 5 type value in it. then I want to do this over a range and find the last row
+of the last column
+            Debug.Print "found "
+        End If
+    Next
+End Sub
+
+
+        
