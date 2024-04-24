@@ -1,0 +1,439 @@
+'Sub upNames2(recipeDateType As String)
+    'Dim sheet As Worksheet'
+    'Dim sheet2 As Worksheet'
+    'Dim sheets() As Variant
+    'sheets = Array(Worksheets("Sheet1"), Worksheets("Sheet2"))
+    
+    'Dim sheet As Variant
+   ' For Each sheet In sheets
+  '      sheet.Rows(1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        'sheet.Cells(1, 1) = recipeDateType'
+ '   Next sheet
+    
+    
+'End Sub '
+Sub FindNonBlankCellsWithIntsOrFloats()
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    
+    Dim cellRange As Range
+    Set cellRange = sheet.Range("A1:B10")
+    Dim cell As Range
+    
+    Dim FirstCell As String
+    Dim LastCell As Range
+    Dim cellNumIndicator As Integer
+    cellNumIndicator = 0
+    Dim previousCell As Range
+    Set previousCell = sheet.Cells(1, 1)
+    
+    For Each cell In cellRange
+        
+        'If Not IsEmpty(cell.Value) Then
+        Debug.Print cell.Value
+        
+        If Not IsEmpty(cell.Value) And VarType(cell.Value) = 5 And cellNumIndicator = 0 Then
+            'Debug.Print VarType(cell.Address)a
+            
+            FirstCell = cell.Address
+            cellNumIndicator = 1
+'Pick up here tomorrow--I want to now store the address if the first and last cell
+'that have a 5 type value in it. then I want to do this over a range and find the last row
+'of the last column
+        
+            Debug.Print "first num cell found at " & cell.Address
+       
+        ElseIf VarType(cell.Value) = 0 And cellNumIndicator = 1 Then
+            'Debug.Print sheet.Cells(cell.Row, cell.Column)
+  '          Debug.Print "last num cell found at " & lastCell
+            cellNumIndiactor = 2
+        End If
+        Debug.Print cell.Value
+        Debug.Print prevousCell
+        Debug.Print cellNumIndicator
+        Set previousCell = cell
+    Next
+      For x = firstRow To lastRow Step 1
+        Debug.Print x
+        For y = firstCol To LastCol Step 1
+            Debug.Print y
+            If IsNumeric(sheet.Cells(x, y).Value) Then
+                Set FirstCell = sheet.Cells(x, y)
+                Exit For
+            End If
+        Next
+        Exit For
+    Debug.Print FirstCell
+    
+   
+End Sub
+
+
+Sub updateNames(recipeDateType As String)
+    'Dim sheet As Worksheet'
+    'Dim sheet2 As Worksheet'
+    Dim Sheets(1 To 2) As Worksheet
+    Set Sheets(1) = Worksheets("Sheet1")
+    Set Sheets(2) = Worksheets("Sheet2")
+    
+    
+    Dim sheet As Variant
+    For Each sheet In Sheets
+        sheet.Rows(1).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+        sheet.Cells(1, 1) = recipeDateType '
+    Next sheet
+    Sheets(1).Cells(1, 2) = 1
+    Sheets(1).Cells(1, 3) = 1
+    
+    Dim myRange As Range
+    
+    
+    Application.WorksheetFunction.Sum (myRange)
+    
+    
+End Sub
+
+Sub TestUpdateNames()
+    updateNames ("test")
+
+End Sub
+
+
+
+Sub FindLastNumberInColumn()
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    Dim cols As Range
+    Set cols = sheet.Range("A1:B1")
+    Dim lastRow As Long
+    Dim i As Long
+    Dim LastCell As Range
+    Dim FirstCell As Range
+    'firstRow = sheet.Range("B1").End(xlDown).Row
+    'firstCol = sheet.Range("B1").End(xlToRight).Column
+    'Debug.Print firstRow, firstCol
+    lastRow = sheet.Range("C20").End(xlUp).Row
+    LastCol = sheet.Range("D1").End(xlToLeft).Column
+    'Debug.Print lastCol
+    For i = lastRow To 1 Step -1
+        'Debug.Print i
+        For j = LastCol To 1 Step -1
+            'Debug.Print j
+            'Debug.Print sheet.Cells(i, j).Value
+            If IsNumeric(sheet.Cells(i, j).Value) Then
+                'Debug.Print i, j
+                'Debug.Print sheet.Cells(i, j).Value
+                'LastCell = sheet.Cells(i, j)
+                Set LastCell = sheet.Cells(i, j)
+                'Debug.Print (LastCell.Value)
+                
+                Exit For
+                
+            End If
+        Next
+        Exit For
+    Next
+    
+    'Don't I know that the first row and first column with a number is always B2 in both my sheets because that's the first cell after the index and header
+    
+    
+    With sheet
+        If Not .Cells.Find(What:="*", After:=.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False) Is Nothing Then
+            firstRow = .Cells.Find(What:="*", After:=.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, SearchOrder:=xlByRows, SearchDirection:=xlNext, _
+        MatchCase:=False).Row
+        End If
+        
+        If Not .Cells.Find(What:="*", After:=.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, SearchOrder:=xlByColumns, SearchDirection:=xlNext, _
+        MatchCase:=False) Is Nothing Then
+            firstCol = .Cells.Find(What:="*", After:=.Cells(1, 1), LookIn:=xlFormulas, LookAt:=xlPart, SearchOrder:=xlByColumns, SearchDirection:=xlNext, _
+        MatchCase:=False).Column
+        End If
+        
+    End With
+    Debug.Print firstRow, firstCol
+    Debug.Print LastCell.Row, LastCell.Column
+   
+End Sub
+
+Sub testUpdateFormula()
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    Dim sheet2 As Worksheet
+    Set sheet2 = Worksheets("Sheet2")
+    Dim DataRange As Range
+    Dim firstRow As Long
+    Dim firstCol As Long
+    Dim LastCell As Range
+    
+    firstRow = sheet.Cells(1, 1).Row
+    firstCol = sheet.Cells(1, 1).Column
+    Set LastCell = sheet.Cells(3, 3)
+    
+    'Debug.Print LastCell.Row, firstCol
+    'Debug.Print sheet.Cells(firstRow, firstCol).Address
+    'Debug.Print sheet.Cells(3, 3).Address
+    'sheet.Cells(1, 1).Address
+     
+    'For Each cell In DataRange
+        'Debug.Print cell
+    'Next
+    'Debug.Print sheet.Range(sheet.Cells(firstRow, firstCol), sheet.Cells(LastCell.Row, LastCell.Column))
+    
+    Set DataRange = sheet.Range(sheet.Cells(firstRow, firstCol).Address & ":" & sheet.Cells(LastCell.Row, LastCell.Column).Address)
+    'DataRange.ClearContents
+    Dim formulaCell As Range
+    
+    
+    'Dim A As Variant
+    'Dim B(1, 1) As Variant
+    
+    'A = Array(sheet.Range("A1:B2"))
+   ' Dim i As Integer
+    'For i = LBound(A) To UBound(A)
+        Debug.Print i
+   ' Next
+    Dim ResultRange As Range
+    Set ResultRange = sheet.Range("A1:C3")
+    Dim MA As Range
+    Dim MB As Range
+    Set MA = sheet.Range("E1:G3")
+    Set MB = sheet.Range("I1:K3")
+    ResultRange = Application.WorksheetFunction.MMult(MA, MB)
+    
+   ' sheet
+    
+    'sheet.Application.WorksheetFunction.MMult("E1:G3", "I1:K3")
+'    "=SEQUENCE" & "(" & "Sheet2!" & sheet2.Cells(3, 3).Address & "," & "Sheet2!" & sheet2.Cells(3, 3).Address & "," & "1," & "1)"
+    
+    'Debug.Print sheet.Range(sheet.Cells(firstRow, firstCol).Address)
+    'For Each cell In DataRange
+     '   Debug.Print cell
+    'Next
+    
+    
+    'Debug.Print "=SEQUENCE" & "(" & "Sheet2!" & sheet2.Cells(3, 3).Address & "," & "Sheet2!" & sheet2.Cells(3, 3).Address & "," & "1," & "1)"
+    'Else
+     '   Debug.Print "not Emprt"
+    'End If
+    
+End Sub
+        
+Sub getFistLastNumberRange2()
+    'returns a range of the first and last numbers'
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    Dim Test As Range
+    Set Test = sheet.Range("A1")
+    Debug.Print Test.Row
+    Debug.Print Test.Column
+    
+End Sub
+
+Sub FindLastNumberInColumn2()
+    Dim sheet As Worksheet
+    Set sheet = Worksheets("Sheet1")
+    Dim cols As Range
+    Set cols = sheet.Range("A1:B1")
+    Dim lastRow As Long
+    Dim i As Long
+    Dim LastCell As Range
+    Dim FirstCell As Range
+    'firstRow = sheet.Range("B1").End(xlDown).Row
+    'firstCol = sheet.Range("B1").End(xlToRight).Column
+    'Debug.Print firstRow, firstCol
+    lastRow = sheet.Range("C20").End(xlUp).Row
+    LastCol = sheet.Range("D1").End(xlToLeft).Column
+    'Debug.Print lastCol
+    For i = lastRow To 1 Step -1
+        'Debug.Print i
+        For j = LastCol To 1 Step -1
+            'Debug.Print j
+            'Debug.Print sheet.Cells(i, j).Value
+            If IsNumeric(sheet.Cells(i, j).Value) Then
+                'Debug.Print i, j
+                'Debug.Print sheet.Cells(i, j).Value
+                'LastCell = sheet.Cells(i, j)
+                Set LastCell = sheet.Cells(i, j)
+                'Debug.Print (LastCell.Value)
+                
+                Exit For
+                
+            End If
+        Next
+        Exit For
+    Next
+End Sub
+
+
+
+
+
+Function getFirstLastNumberRange(FirstCell As String, LastCell As String, SheetUsed As String) As Range
+    Dim sheet As Worksheet
+    Set sheet = Worksheets(SheetUsed)
+    
+    Set RangeUsed = sheet.Range(FirstCell & ":" & LastCell)
+    Dim lastValueRow As Long
+    
+    Dim i As Long
+    Dim j As Long
+    
+    Dim lastBalueCol As Long
+    Dim OneColRight As Long
+    
+    'Dim LastNumCellNum As Range
+    'Dim FirstCell As Range
+    'firstRow = sheet.Range("B1").End(xlDown).Row
+    'firstCol = sheet.Range("B1").End(xlToRight).Column
+    'Debug.Print firstRow, firstCol
+    Dim OneRowDown As Integer
+    OneRowDown = RangeUsed.Rows.Count + 1
+    
+    OneColRight = RangeUsed.Columns.Count + 1
+    Dim RNGCOL As String
+    RNGCOL = sheet.Cells(1, OneColRight).Address
+    'Debug.Print RNGCOL
+    
+    'Debug.Print OneRowDown
+    'Debug.Print FirstCell
+    Dim RNGROW As String
+    RNGROW = Left(FirstCell, 1) & CStr(OneRowDown)
+    'Debug.Print RNG
+    lastValueRow = sheet.Range(RNGROW).End(xlUp).Row
+    'Debug.Print lastValueRow
+    
+    LastValueCol = sheet.Range(RNGCOL).End(xlToLeft).Column
+    
+    'Debug.Print lastValueCol
+    Dim LastCellNumeric As Range
+    For i = lastValueRow To 1 Step -1
+        'Debug.Print i
+        For j = LastValueCol To 1 Step -1
+            'Debug.Print j
+            'Debug.Print sheet.Cells(i, j).Value
+            If IsNumeric(sheet.Cells(i, j).Value) Then
+                'Debug.Print i, j
+                'Debug.Print sheet.Cells(i, j).Value
+                LastCell = sheet.Cells(i, j).Address
+                
+                Exit For
+                
+            End If
+        Next
+        
+        Exit For
+        
+    Next
+    'Debug.Print LastCellNumeric.Address
+    Dim RangeNumericCells As Range
+    Set RangeNumericCells = sheet.Range("B2:" & LastCell)
+    'Debug.Print sheet.Range("B2:" & LastCell).Rows.Count
+    'Debug.Print RangeNumericCells.Row
+    Set getFirstLastNumberRange = RangeNumericCells
+    
+End Function
+
+Sub updateMultipleNames(recipeDateTypes As String, sheetsUsed As String)
+    Dim Recipes() As String
+    Dim Sheets() As String
+    
+    Recipes = Split(recipeDateTypes, ",")
+    Sheets = Split(sheetsUsed, ",")
+    
+    'Dim recipeDateTypes(1)
+    
+    Dim SheetsArrayLength As Integer
+    SheetsArrayLength = UBound(Sheets) - LBound(Sheets)
+    'Debug.Print SheetsArrayLength
+    
+    Dim LengthRecipeArray As Integer
+    LengthRecipeArray = UBound(Recipes) - LBound(Recipes)
+    'Debug.Print (LengthRecipeArray)
+    
+    ReDim sheetss(SheetsArrayLength) As Variant
+    
+    For j = 0 To SheetsArrayLength Step 1
+         'Debug.Print j
+         'Debug.Print Sheets(j)
+         Set sheetss(j) = Worksheets(Trim(Sheets(j)))
+    Next
+
+    
+    For i = 0 To LengthRecipeArray Step 1
+    
+    'Dim sheet As Worksheet'
+    'Dim sheet2 As Worksheet'
+        'Debug.Print Recipes(i)
+        'Dim sheet As Variant
+        For Each sheet In sheetss
+             sheet.Rows(2).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+             sheet.Cells(2, 1) = Recipes(i)
+             'Dim fillRec As Range
+             'Set fillRec = Sheets(j).Range("B2:E3")
+             'fillRec.NumberFormat = "0.00"
+        Next
+    Next
+    
+    
+    'fillRec = 1
+End Sub
+
+Sub DoMMult(sheetsToMult As String, TargetSheetStr As String)
+
+    Dim SheetsMult() As String
+    SheetsMult = Split(sheetsToMult, ",")
+    Dim SheetsLength As Integer
+    SheetsLength = UBound(SheetsMult) - LBound(SheetsMult)
+    
+    ReDim SheetUsed2(0 To SheetsLength) As Variant
+    
+    For j = 0 To SheetsLength Step 1
+         'Debug.Print j
+         'Debug.Print SheetsMult(j)
+         Set SheetUsed2(j) = Worksheets(Trim(SheetsMult(j)))
+    Next
+    
+    Dim sheetTarget As Worksheet
+    Set sheetTarget = Worksheets(Trim(TargetSheetStr))
+    
+    Dim rngUsedRec As Range
+    Set rngUsedRec = getFirstLastNumberRange("A1", "H10", Trim(SheetsMult(0)))
+    
+    'If this bound is within the columns or rows it'll go down to the first entry in the row/column
+    
+    
+    Dim rngUsedNut As Range
+    Set rngUsedNut = getFirstLastNumberRange("A1", "H105", Trim(SheetsMult(1)))
+    
+    Dim MMultRange As Range
+    Set MMultRange = sheetTarget.Range("B2:" & sheetTarget.Cells(rngUsedRec.Rows.Count + 1, rngUsedNut.Columns.Count + 1).Address)
+    
+    MMultRange = Application.WorksheetFunction.MMult(rngUsedRec, rngUsedNut)
+    
+    MMultRange.NumberFormat = "0.0"
+    
+    'Debug.Print sheet3.Cells(rngUsedRec.Rows.Count + 1, rngUsedNut.Columns.Count + 1).Address
+    'Debug.Print MMultRange.Address
+    
+    'Debug.Print MMultRange.Columns.Count
+    'Debug.Print rngUsedNut.Address
+    'Debug.Print rngUsedRec.Address
+    'Dim Test As Range
+End Sub
+
+Sub TestMMult()
+    DoMMult "Sheet1, Sheet2", "Sheet3"
+    
+End Sub
+
+Sub TestNames()
+
+    updateMultipleNames "Test , Test2", "Sheet1,Sheet2,Sheet3"
+    
+End Sub
+
+
+'I also need to update the recXcost after I do recipeXnutiriont
+
+

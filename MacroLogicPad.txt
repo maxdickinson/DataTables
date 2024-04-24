@@ -1,0 +1,29 @@
+Excel Reminder Tips 
+
+Fill all blank cells with 0
+1. Select the entire range of cells that contains the blanks, including those that contain values.
+
+2. On the Home tab, in the Editing group, click Find and Select, then click Go To..., or just press F5.
+
+3. Click Special, select Blanks and click OK
+
+4. Type a 0 (zero), hold down CTRL and press ENTER
+
+All the blank cells should now contain zeroes.
+
+
+
+
+
+HOW TO USE IN PRACTICE:
+
+1. Run Update Names and update the names
+2. fill in the recipe data
+3. run DoMMult
+
+--Make the function names explicit for recipeXNutrition and recipeXCost and
+recipeXNutrition in thirds
+
+make the subroutine for DoMMult on recipeXNUtrition also update the recXNutiriton 
+that's in thirds
+

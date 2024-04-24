@@ -154,4 +154,7 @@ of the last column
 End Sub
 
 
+ARRAYS are ) INDEXED
+
+
         
