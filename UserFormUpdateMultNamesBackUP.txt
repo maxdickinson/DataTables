@@ -1,0 +1,422 @@
+'FIUNCTIOPNALIYT TO ADD
+'CHOOSE WHAT WORKBOOK TO USE
+USERFORM 1
+USERFROM 2
+Function ValidateTextBox(textToValidate As String, TextBoxNum2 As String) As Variant
+    'use textToValidate as what you want to validate
+    'use TexBoxNum2 to enter the textbox the texttoValidate corresponds to
+    Dim TextStringed() As String
+    Dim Text() As Variant
+    'grab each individual string and put in array
+    TextStringed = Split(textToValidate, ",")
+    Dim bounds As Long
+    Dim currentText As String
+    bounds = UBound(TextStringed) - LBound(TextStringed)
+    Dim indictor As Integer
+    indicator = 0
+    ReDim Text(0 To bounds + 1)
+    Dim runningText As String
+    runningText = ""
+    Set Ctrl = UserForm2.Controls(TextBoxNum2)
+    'check if first entry in box was empty or there was a null value
+    If Len(textToValidate) = 0 Or IsNull(textToValidate) Then
+        MsgBox "An entry was empty, please enter a descriptive name"
+        Debug.Print "ran"
+        Ctrl.Value = ""
+        Ctrl.SetFocus
+        indicator = 0
+        Text(0) = indicator
+        ValidateTextBox = Text()
+        Exit Function
+    Else
+        'redim here because if text box is empty need to exit
+        For i = 0 To bounds
+            currentText = Trim(TextStringed(i))
+            Debug.Print runningText
+            'check if one of the recipes in the middle or end had nothing entered
+            If currentText = "" Then
+                MsgBox "An entry was empty, please enter a descriptive name"
+                Debug.Print "ran2"
+                Debug.Print runningText
+                Ctrl.Value = runningText
+                Ctrl.SetFocus
+                indicator = 0
+                Text(0) = indicator
+                ValidateTextBox = Text()
+                Exit Function
+            ElseIf Len(CStr(Val(currentText))) = Len(currentText) Then
+                Debug.Print "ran3"
+                MsgBox "All numbers were entered, please be more descriptive about the recipe date and type"
+                Ctrl.Value = runningText
+                Ctrl.SetFocus
+                indicator = 0
+                Text(0) = indicator
+                ValidateTextBox = Text()
+                Exit Function
+            Else
+                Debug.Print "ran4"
+                Text(i) = currentText
+                runningText = runningText & currentText
+                'Debug.Print Text(i)
+            End If
+        Next
+    End If
+    Text(bounds + 1) = 1
+    ValidateTextBox = Text()
+End Function
+'USE THIS TO VALIDATE WORKSHEET NAMES
+Function GetWorksheetNames() As Variant
+    Dim ws As Worksheet
+    Dim names() As String
+    Dim wbook As Workbook
+    Set wbook = Workbooks("AllTablesCurrent BackUp.xlsm")
+    ReDim names(1 To wbook.Worksheets.Count)
+    For i = 1 To wbook.Worksheets.Count
+        names(i) = wbook.Worksheets(i).name
+    Next
+    GetWorksheetNames = names()
+End Function
+Function InArray(nameToCheck As Variant, Arrayy As Variant) As Boolean
+    'Check if a value is in an arrayyyy
+    'FUNCTIONALY I could ADD
+    'I could convert nameToCheck to all lower case, because it's hard to remeber
+    'upper and lower in names
+    Dim bounds As Long
+    bounds = UBound(Arrayy) - LBound(Arrayy) + 1
+    'take out white spaces
+    nameToCheck = Trim(nameToCheck)
+    'indiactor if passed or failed
+    Dim indicate As Integer
+    indicate = 0
+    'loop through named values to check if in given array
+    For i = 1 To bounds
+        'this might not work because they are variant/strings
+        ' or it will work becaues they're variants
+        If StrComp(nameToCheck, Trim(Arrayy(i)), vbTextCompare) = 0 Then
+            indicate = 1
+        End If
+    Next
+    Debug.Print indicate
+    If indicate = 1 Then
+        InArray = True
+        Exit Function
+    Else:
+        InArray = False
+        Exit Function
+    End If
+End Function
+Function validateWorkSheetNames(sheetsToCheck As Variant, TextBoxUsed As String) As Boolean
+    Dim indicateSheetInAllSheets As Boolean
+     'Functionality I could Add:'
+    'what if I enter 3 good ones and 1 bad one in the middle
+    'removing a specific value from the array of sheets is functionality I can add later if I choose to
+    'Keep any values that are before the bad entry
+    Dim runningText As String
+    runningText = ""
+    'get the worksheet names using the function getworksheetnames which grabs them fromn the active workbook
+    Dim worksheetNames As Variant
+    worksheetNames = GetWorksheetNames
+    'Debug.Print worksheetNames
+    Set Ctrl = UserForm2.Controls(TextBoxUsed)
+    Dim Bound As Integer
+    sheetsToCheck2 = Split(sheetsToCheck, ",")
+    'should really be checking bounds of array here to get singletons
+    'FUNCTIONALITY I COULD ADD
+    'IF A VALID SHEETY IS ENTERED AFTER AN INVALID ONE THEN KEEP THE GOOD ONE
+    If IsArray(sheetsToCheck2) = True Then
+        'Debug.Print sheetsToCheck
+        Debug.Print IsArray(sheetsToCheck2)
+        Bound = UBound(sheetsToCheck2) - LBound(sheetsToCheck2)
+        Bound = Bound
+        Debug.Print Bound
+        For i = 0 To Bound Step 1
+            indicateSheetInAllSheets = InArray(CStr(sheetsToCheck2(i)), worksheetNames)
+            Debug.Print indicateSheetInAllSheets
+            If indicateSheetInAllSheets = False Then
+                MsgBox "The sheet entered at position" & i + 1 & "was not in the Workbook"
+                'keep the good values before the bad one
+                Ctrl.Value = runningText
+                validateWorkSheetNames = False
+                Exit Function
+                Exit For
+            End If
+            runningText = runningText & CStr(sheetsToCheck2(i))
+        Debug.Print i
+        Next
+    End If
+    If indicateSheetInAllSheets = True Then
+       validateWorkSheetNames = True
+       Exit Function ' make this change to USEREFOMR 1
+    End If
+    'FUNCTIONALITY I COULD ADD
+    'IF A VALID SHEETY IS ENTERED AFTER AN INVALID ONE THEN KEEP THE GOOD ONE
+    If Not IsArray(sheetsToCheck2) Then
+    'single value as sheetsTOCheck
+        indicateSheetInAllSheets = InArray(CStr(sheetsToCheck2), worksheetNames)
+        'Debug.Print indicateSheetInAllSheets
+        If indicateSheetInAllSheets = False Then
+            MsgBox "The sheet entered at position" & 1 & "was not in the Workbook"
+            'keep the good values before the bad one
+            Ctrl.Value = runningText
+            validateWorkSheetNames = False
+            Exit Function
+        End If
+        runningText = runningText & sheetsToCheck2
+    End If
+    If indicateSheetInAllSheets = True Then
+       validateWorkSheetNames = True
+       Exit Function ' make this change to USEREFOMR 1
+    End If
+End Function
+    Private Sub CommandButton1_Click()
+    'Get vluaes from textbox2, the recipe names
+        Dim priors As Variant
+        priors = ValidateTextBox(TextBox1.Text, "TextBox1")
+        Dim sheet As Variant
+        sheet = ValidateTextBox(TextBox2.Text, "TextBox2")
+        'FunCtionalit I COULD ADDD
+        'check that the recipes are seperated by a comma maybe, because it messes up if they arent
+         Dim Bound As Integer
+        Bound = UBound(sheet) - LBound(sheet)
+        'Get vluaes from textbox2, the sheet names
+        Dim Bound2 As Integer
+        Bound2 = UBound(priors) - LBound(priors)
+        ' check if there are 2 sheets in priors and 1 in Bound
+        'priors and sheets are 0 indexed
+        If Bound2 <> 2 Then
+            UserForm2.TextBox1.Value = ""
+            MsgBox "Only Enter 2 Sheets"
+        End If
+        If Bound <> 1 Then
+            UserForm2.TextBox2.Value = ""
+            MsgBox "Only Enter 1 Sheet"
+        End If
+        'check if the failed validation indicator at the end of the arrays is "0"
+        'and return to user form if so
+        If sheet(Bound) = "0" Then
+            Exit Sub
+        End If
+        If priors(Bound2) = "0" Then
+            Exit Sub
+        End If
+        Dim indicateValidWokSheetNames As Boolean
+        Dim indicateValidPriorSheetNames As Boolean
+        indicateValidPriorSheetNames = validateWorkSheetNames(TextBox1.Text, "TextBox1")
+        indicateValidWokSheetNames = validateWorkSheetNames(TextBox2.Text, "TextBox2")
+        'FUNCTIONALITY TO ADD, MAKE SURE THE PRIOR AND TARGET NAMES ARE UNIQUE
+        'Debug.Print indicateValidPriorSheetNames
+        'Debug.Print indicateValidWokSheetNames
+        If indicateValidWokSheetNames = False Then
+            Debug.Print "ran5"
+            Exit Sub
+        End If
+        If indicateValidPriorSheetNames = False Then
+            Debug.Print "ran6"
+            Exit Sub
+        End If
+        Dim B3 As Integer
+        'bounds/num of entries in Priors
+        B3 = Bound2 - 1
+        'Debug.Print B3
+        'bounds/num of entries in Target Sheet
+        Dim B1 As Integer
+        B1 = Bound - 1
+        'Debug.Print B1
+        Dim newPriorArray() As String
+        Dim newSheetArray() As String
+        ReDim newPriorArray(B3)
+        ReDim newSheetArray(B1)
+        'string of all the values in these arrays
+        Dim PriorData2 As String
+        Dim sheetData2 As String
+        'checking the last value of recipes and bounds becase
+        'it has an indicator that tells whether the validation was passed or not
+        'so a 1 at the end for both means it passed validation
+        If priors(Bound2) And sheet(Bound) = "1" Then
+            If indicateValidPriorSheetNames = True Then
+                For i = 0 To B3 Step 1
+                   newPriorArray(i) = priors(i)
+                   'Debug.Print newPriorArray(i)
+                Next
+            End If
+            If indicateValidWokSheetNames = True Then
+                For i = 0 To B1 Step 1
+                   newSheetArray(i) = sheet(i)
+                   'Debug.Print newSheetArray(i)
+                Next
+                PriorData2 = Join(newPriorArray(), ",")
+                sheetData2 = Join(newSheetArray(), ",")
+                'Debug.Print PriorData2
+                'recipeDataValue2 = recipeDataValue(recipeData2)
+                'recipeData = recipeData2
+                'Debug.Print PriorData2
+                'DoTheData recipeData2, PriorData2
+                DoTheMult PriorData2, sheetData2
+                Unload UserForm2
+            End If
+        Else
+            Exit Sub
+        End If
+    End Sub
+Sub updateMultipleNames(recipeDateTypes As String, sheetsUsed As String)
+'Updae one to many names into multiple sheets at the 2nd cell, so under a header
+    Dim recipes() As String
+    Dim sheets() As String
+    recipes = Split(recipeDateTypes, ",")
+    sheets = Split(Trim(sheetsUsed), ",")
+    Dim SheetsArrayLength As Integer
+    SheetsArrayLength = UBound(sheets) - LBound(sheets)
+    Dim LengthRecipeArray As Integer
+    LengthRecipeArray = UBound(recipes) - LBound(recipes)
+    Dim sheetss() As Worksheet
+    ReDim sheetss(SheetsArrayLength)
+    Dim wbook As Workbook
+    Set wbook = Workbooks("AllTablesCurrent BackUp.xlsm")
+    Dim name As String
+    Debug.Print sheets(0)
+    For j = 0 To SheetsArrayLength Step 1
+        Debug.Print j
+        name = sheets(j)
+        Set sheetss(j) = wbook.sheets(name)
+    Next
+    Dim numRange As Range
+    Dim FillRange As Range
+    For i = 0 To LengthRecipeArray Step 1
+ 'FORMAT ALL THE BLANK CELLS AS "0.0" floats
+        For Each sheet In sheetss
+             Set numRange = getFirstLastNumberRange("ZZ100", sheet.name)
+             sheet.Rows(2).Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+             Set FillRange = sheet.Range("B2:" & sheet.Cells(2, numRange.Columns.Count + 1).Address)
+             Debug.Print FillRange.Address
+             sheet.Cells(2, 1) = Trim(recipes(i))
+             FillRange.NumberFormat = "0.0"
+             FillRange = 0
+        Next
+    Next
+End Sub
+'Sub TestNames()
+ '   Call updateMultipleNames("asdf ,dfg", "Sheet1,Sheet2")
+'End Sub
+Function getFirstLastNumberRange(LastCell As String, SheetUsed As String) As Range
+    'doens't work if the range used is WITHIN THE VALUES HAD
+    'going to fix this by finding the first numeric cell in the range
+    Dim sheet As Worksheet
+    Dim wbook As Workbook
+    Set wbook = Workbooks("AllTablesCurrent BackUp.xlsm")
+    Set sheet = wbook.Worksheets(SheetUsed)
+    Dim RangeUsed As Range
+    Set RangeUsed = sheet.Range("A1:" & LastCell)
+    Dim lastValueRow As Long
+    Dim i As Long
+    Dim j As Long
+    Dim lastValueCol As Long
+    Dim OneColRight As Long
+    Dim OneRowDown As Integer
+    OneRowDown = RangeUsed.Rows.Count + 1
+    OneColRight = RangeUsed.Columns.Count + 1
+    'Ideally I'm checking if I have a value in the first row and first column so that End(xlUp
+    ' and End(xlToLeft) have a value to find
+    'doesn't work if one of these columns or rows is blank
+    Dim RNGCOL As String
+    RNGCOL = sheet.Cells(1, OneColRight).End(xlToLeft).Column
+    Dim RNGROW As String
+    RNGROW = sheet.Cells(OneRowDown, 1).End(xlUp).Row
+    lastValueRow = CInt(RNGROW)
+    lastValueCol = CInt(RNGCOL)
+    'Place to put the First Cell
+    Dim FirstCell As Range
+    'indicator found the number in first cell and to quit loop
+    Dim Found As Long
+    Found = 0
+    'indicator found the number in first cell and to quit loop
+    'Dim VeryFound As Long
+    'VeryFound = 0
+    For x = 1 To lastValueRow Step 1
+    'Debug.Print x
+        If Found = 1 Then
+            Exit For
+        End If
+        For y = 1 To lastValueCol Step 1
+            'Debug.Print y
+            'Debug.Print sheet.Cells(x, y).Value
+            If IsNumeric(sheet.Cells(x, y).Value) And Not IsEmpty(sheet.Cells(x, y).Value) And Found = 0 Then
+                Set FirstCell = sheet.Cells(x, y)
+                'Debug.Print FirstCell.Address
+                Found = 1
+                'VeryFound = 1
+                Exit For
+            End If
+        Next
+        'If VeryFound = 1 Then
+        'End If
+    Next
+    'Finding the last number
+    For i = lastValueRow To 1 Step -1
+        'Debug.Print i
+        For j = lastValueCol To 1 Step -1
+         '   Debug.Print j
+            If IsNumeric(sheet.Cells(i, j).Value) Then
+                LastCell = sheet.Cells(i, j).Address
+                Exit For
+            End If
+        Next
+        Exit For
+    Next
+    Dim RangeNumericCells As Range
+    Set RangeNumericCells = sheet.Range(FirstCell.Address & ":" & LastCell)
+    Set getFirstLastNumberRange = RangeNumericCells
+End Function
+Sub DoMMult(sheetsToMult As String, TargetSheetStr As String)
+    ' need to have only and only the data that will get multipled on the sheets wanted to multiply.
+    ' or else get last number will find the wrong last cell
+    'NEED TO set the last cell in getfirstlastnumber rnage as something outside the value used or else
+    'the end.XlLeft and end.XLUP will find the first row or column
+    'create array of sheets to matrix multiply
+    Dim SheetsMult2() As String
+    SheetsMult2 = Split(Trim(sheetsToMult), ",")
+    Dim SheetsLength As Integer
+    SheetsLength = UBound(SheetsMult2) - LBound(SheetsMult2)
+    ReDim SheetUsed2(0 To SheetsLength) As Variant
+    For j = 0 To SheetsLength Step 1
+         Set SheetUsed2(j) = Worksheets(Trim(SheetsMult2(j)))
+    Next
+    ' only one target sheet'
+    Dim sheetTarget As Worksheet
+    Set sheetTarget = Worksheets(Trim(TargetSheetStr))
+    'set the range of values you want in the two intitial sheets (a)(b)
+    ' I guess it would be nice to know the range in a better way than guessing but it
+    ' feels pretty easy to just pull a range that's very large and covers more than the data you have
+    Dim rngUsedRec As Range
+    Set rngUsedRec = getFirstLastNumberRange("ZZ100", Trim(SheetsMult2(0)))
+    Debug.Print rngUsedRec.Address
+    Dim rngUsedNut As Range
+    Set rngUsedNut = getFirstLastNumberRange("ZZ100", Trim(SheetsMult2(1)))
+    Debug.Print rngUsedNut.Address
+    'set the range where the matrix information where go, always starts at B2 because that's the
+    'first cell after the header and index
+    'put the multiplication resutlts in the range and set the format to float
+    Dim MMultRange As Range
+    Set MMultRange = sheetTarget.Range("B2:" & sheetTarget.Cells(rngUsedRec.Rows.Count + 1, rngUsedNut.Columns.Count + 1).Address)
+    MMultRange = Application.WorksheetFunction.MMult(rngUsedRec, rngUsedNut)
+    MMultRange.NumberFormat = "0.0"
+End Sub
+Sub DoTheData(recs As String, shts As String)
+    'Debug.Print
+    'DV = recipeDataValue(recipeData)
+    'Dim reccs As String
+    'recs = recipeData
+    updateMultipleNames recs, shts
+    'MsgBox "The dta entreed is " & recs
+    'TRY THIDS WITH UPDATEMULTIPLE NAMES NEXT
+   ' IT EWORKD!!
+    'updateMultipleNames
+End Sub
+Sub DoTheMult(toMult As String, toWhere As String)
+    DoMMult toMult, toWhere
+End Sub
+Sub RunUpdateMatrixMultiplication()
+    UserForm2.Show
+End Sub
+Sub RunUpdateMultipleNames()
+    UserForm1.Show
+End Sub
